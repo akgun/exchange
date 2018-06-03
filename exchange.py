@@ -5,22 +5,19 @@ import requests
 
 
 def fetch_exchanges(codes, target):
-    try:
-        currencies = []
-        URL = 'https://free.currencyconverterapi.com/api/v5/convert?q={query}&compact=y'
-        target = target.upper()
-        for code in codes:
-            code = code.upper()
-            query = '{code}_{target}'.format(code=code, target=target)
-            response = requests.get(URL.format(query=query)).json()
-            if query in response:
-                currencies.append({
-                    'code': code,
-                    'rate': str(response[query]['val'])
-                })
-        return currencies
-    except:
-        return []
+    currencies = []
+    URL = 'https://free.currencyconverterapi.com/api/v5/convert?q={query}&compact=y'
+    target = target.upper()
+    for code in codes:
+        code = code.upper()
+        query = '{code}_{target}'.format(code=code, target=target)
+        response = requests.get(URL.format(query=query)).json()
+        if query in response:
+            currencies.append({
+                'code': code,
+                'rate': str(response[query]['val'])
+            })
+    return currencies
 
 
 @click.command()
