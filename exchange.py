@@ -4,13 +4,14 @@ import click
 import requests
 
 
-def fetch_exchanges(codes):
+def fetch_exchanges(codes, target):
     try:
         currencies = []
         URL = 'https://free.currencyconverterapi.com/api/v5/convert?q={query}&compact=y'
+        target = target.upper()
         for code in codes:
             code = code.upper()
-            query = '{code}_TRY'.format(code=code)
+            query = '{code}_{target}'.format(code=code, target=target)
             response = requests.get(URL.format(query=query)).json()
             if query in response:
                 currencies.append({
@@ -24,13 +25,14 @@ def fetch_exchanges(codes):
 
 @click.command()
 @click.option('--delimiter', '-d', default=':')
+@click.option('--target', '-t', default='TRY')
 @click.argument('code', nargs=-1)
-def exchange(delimiter, code):
+def exchange(delimiter, target, code):
     """Show exchange rates"""
     if not code:
         click.echo('Provide currency code.')
         sys.exit(1)
-    exchanges = fetch_exchanges(code)
+    exchanges = fetch_exchanges(code, target)
     lines = [exchange['code'] + delimiter + exchange['rate'] for exchange in exchanges]
     click.echo(', '.join(lines))
 
